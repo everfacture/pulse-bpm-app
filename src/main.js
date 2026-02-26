@@ -1,4 +1,4 @@
-import { RealTimeBpmAnalyzer } from 'realtime-bpm-analyzer';
+import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
 
 // State variables
 let isListening = false;
@@ -37,31 +37,20 @@ async function startListening() {
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-        // Setup Analyzer Node
-        realtimeAnalyzer = new RealTimeBpmAnalyzer({
-            continuousAnalysis: true,
-            stabilizationTime: 3000,
-            onBpmEvent: (data) => {
-                if (data.bpm && data.bpm.length > 0) {
-                    const topBpm = data.bpm[0];
-                    updateDisplay(topBpm.tempo, topBpm.confidence);
-                }
+        // Setup Analyzer Node v5
+        realtimeAnalyzer = await createRealtimeBpmAnalyzer(audioContext);
+
+        realtimeAnalyzer.on('bpm', (data) => {
+            if (data.bpm && data.bpm.length > 0) {
+                const topBpm = data.bpm[0];
+                updateDisplay(topBpm.tempo, topBpm.confidence);
             }
         });
 
         // Connect source to analyzer
         source = audioContext.createMediaStreamSource(stream);
-
-        // Create an AudioWorklet or ScriptProcessor (RealTimeBpmAnalyzer uses this)
-        // Note: RealTimeBpmAnalyzer handles the connection internal to its node if using newer version, 
-        // but often we need to pipe the data through it.
-        const scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
-        source.connect(scriptProcessor);
-        scriptProcessor.connect(audioContext.destination);
-
-        scriptProcessor.onaudioprocess = (e) => {
-            realtimeAnalyzer.analyze(e.inputBuffer);
-        };
+        source.connect(realtimeAnalyzer.node);
+        realtimeAnalyzer.node.connect(audioContext.destination);
 
         isListening = true;
         listenBtn.classList.add('active');

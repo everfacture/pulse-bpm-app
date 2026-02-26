@@ -2,6 +2,16 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+    root: 'src',
+    build: {
+        outDir: '../dist',
+        emptyOutDir: true,
+    },
+    resolve: {
+        alias: {
+            'realtime-bpm-analyzer': '../node_modules/realtime-bpm-analyzer/dist/dist/index.esm.js'
+        }
+    },
     plugins: [
         VitePWA({
             registerType: 'autoUpdate',
