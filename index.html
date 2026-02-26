@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse | Ambient BPM</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>PULSE</h1>
+            <p>Ambient BPM Detector</p>
+        </header>
+
+        <main>
+            <div class="display-container">
+                <div id="bpm-display">--</div>
+                <div id="confidence-bar">
+                    <div id="confidence-fill"></div>
+                </div>
+                <p id="status-text">Ready to listen</p>
+            </div>
+
+            <button id="listen-btn">
+                <div class="pulse-ring"></div>
+                <span id="btn-text">LISTEN</span>
+            </button>
+        </main>
+
+        <section id="history">
+            <div class="history-header">
+                <h2>History</h2>
+                <button id="export-btn" class="icon-btn" title="Export Data">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+            </div>
+            <ul id="history-list">
+                <!-- History items will be injected here -->
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Pulse BPM App</p>
+        </footer>
+    </div>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
