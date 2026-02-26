@@ -22,6 +22,9 @@ renderHistory();
 // Toggle Button Click Handler
 listenBtn.addEventListener('click', async () => {
     if (!isListening) {
+        if (audioContext && audioContext.state === 'suspended') {
+            await audioContext.resume();
+        }
         await startListening();
     } else {
         stopListening();
@@ -50,7 +53,7 @@ async function startListening() {
         // Connect source to analyzer
         source = audioContext.createMediaStreamSource(stream);
         source.connect(realtimeAnalyzer.node);
-        realtimeAnalyzer.node.connect(audioContext.destination);
+        // Removed destination connection to prevent feedback loop
 
         isListening = true;
         listenBtn.classList.add('active');
@@ -82,6 +85,9 @@ function stopListening() {
 }
 
 function updateDisplay(bpm, confidence) {
+    // BPM Range Validation (40-200)
+    if (bpm < 40 || bpm > 200) return;
+
     const roundedBpm = Math.round(bpm);
     bpmDisplay.innerText = roundedBpm;
 
