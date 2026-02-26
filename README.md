@@ -1,6 +1,6 @@
 # PULSE — Ambient BPM Detector
 
-![Pulse Hero Logo](./assets/logo.png)
+![Pulse Hero Banner](./assets/hero-banner.png)
 
 [![Build Status](https://github.com/everfacture/pulse-bpm-app/actions/workflows/build.yml/badge.svg)](https://github.com/everfacture/pulse-bpm-app/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
