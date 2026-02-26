@@ -72,7 +72,7 @@ new RealTimeBpmAnalyzer({
 
 ## 🗺️ Roadmap
 
-Based on the [Project Spec](./docs/spec.md), we are currently in Phase 1 (MVP). Future enhancements include:
+Pulse is currently in its MVP phase. Our development roadmap includes several advanced features to enhance the ambient detection experience:
 
 ### Phase 2 (Upcoming)
 - [ ] **Sparkline Graph**: Visualise BPM trends over time.
