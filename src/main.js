@@ -8,18 +8,7 @@ let source = null;
 let realtimeAnalyzer = null;
 let history = [];
 
-// Initialize history from IndexedDB
-async function init() {
-    try {
-        history = await getHistory();
-    } catch (e) {
-        console.warn('IndexedDB unavailable, using memory only');
-        history = [];
-    }
-    renderHistory();
-    if (sparklineCtx) setTimeout(drawSparkline, 100);
-}
-init();
+// DOM Elements
 const bpmDisplay = document.getElementById('bpm-display');
 const confidenceFill = document.getElementById('confidence-fill');
 const statusText = document.getElementById('status-text');
@@ -39,12 +28,24 @@ const sparklineCtx = sparklineCanvas?.getContext('2d') ?? null;
 
 let currentSensitivity = 0.8;
 
-sensitivitySlider.addEventListener('input', (e) => {
-    currentSensitivity = e.target.value / 100;
-});
+// Initialize
+async function init() {
+    try {
+        history = await getHistory();
+    } catch (e) {
+        console.warn('IndexedDB unavailable, using memory only');
+        history = [];
+    }
+    if (historyList) renderHistory();
+    if (sparklineCtx) setTimeout(drawSparkline, 100);
+}
+init();
 
-// Initialize history display
-renderHistory();
+if (sensitivitySlider) {
+    sensitivitySlider.addEventListener('input', (e) => {
+        currentSensitivity = e.target.value / 100;
+    });
+}
 
 // Toggle Button Click Handler
 listenBtn.addEventListener('click', async () => {
@@ -87,8 +88,8 @@ async function startListening() {
         btnText.innerText = 'STOP';
         statusText.innerText = 'Listening for BPM...';
 
-        bpmDisplay.innerText = '--';
-        confidenceFill.style.width = '0%';
+        if (bpmDisplay) bpmDisplay.innerText = '--';
+        if (confidenceFill) confidenceFill.style.width = '0%';
 
         // Handle background state
         audioContext.onstatechange = () => {
@@ -116,21 +117,22 @@ function stopListening() {
 
     // Reset display
     resetRollingDigits();
-    confidenceFill.style.width = '0%';
+    if (confidenceFill) confidenceFill.style.width = '0%';
 }
 
 function resetRollingDigits() {
+    if (!digitStrips[0]) return;
     digitStrips.forEach(strip => {
-        strip.style.transform = 'translateY(-1000%)'; // The '-' character is at the 11th position (index 10)
+        strip.style.transform = 'translateY(-1000%)';
     });
 }
 
 function updateRollingDigits(bpm) {
+    if (!digitStrips[0]) return;
     const digits = bpm.toString().padStart(3, '0').split('');
 
     digits.forEach((digit, i) => {
         const val = parseInt(digit);
-        // Each digit is 1/11 of the strip height (0-9 and -)
         const y = (val / 11) * 100;
         digitStrips[i].style.transform = `translateY(-${y}%)`;
 
@@ -152,23 +154,25 @@ function updateDisplay(bpm, confidence) {
     lastUpdateTime = Date.now();
 
     // Update Genre
-    genreBadge.innerText = getGenre(roundedBpm);
+    if (genreBadge) genreBadge.innerText = getGenre(roundedBpm);
 
     const percentage = Math.min(100, Math.round(confidence * 100));
-    confidenceFill.style.width = `${percentage}%`;
+    if (confidenceFill) confidenceFill.style.width = `${percentage}%`;
 
     // Update color based on confidence
     if (confidence > currentSensitivity) {
-        confidenceFill.style.background = '#34c759'; // High
+        if (confidenceFill) confidenceFill.style.background = '#34c759';
         saveToHistory(roundedBpm, confidence);
-        genreBadge.style.color = '#fff';
-        genreBadge.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        if (genreBadge) {
+            genreBadge.style.color = '#fff';
+            genreBadge.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        }
     } else if (confidence > currentSensitivity / 2) {
-        confidenceFill.style.background = '#ff9f0a'; // Med
-        genreBadge.style.color = 'var(--text-secondary)';
+        if (confidenceFill) confidenceFill.style.background = '#ff9f0a';
+        if (genreBadge) genreBadge.style.color = 'var(--text-secondary)';
     } else {
-        confidenceFill.style.background = '#ff3b30'; // Low
-        genreBadge.style.color = 'var(--text-secondary)';
+        if (confidenceFill) confidenceFill.style.background = '#ff3b30';
+        if (genreBadge) genreBadge.style.color = 'var(--text-secondary)';
     }
 }
 
@@ -190,17 +194,15 @@ function checkAutoReset() {
     if (!isListening) return;
 
     const now = Date.now();
-    // If no quality update for 5 seconds, reset state for new track detection
-    if (now - lastUpdateTime > 5000 && confidenceFill.style.width !== '0%') {
+    if (now - lastUpdateTime > 5000 && confidenceFill && confidenceFill.style.width !== '0%') {
         resetRollingDigits();
         confidenceFill.style.width = '0%';
-        genreBadge.innerText = 'WAITING...';
+        if (genreBadge) genreBadge.innerText = 'WAITING...';
     }
 }
 setInterval(checkAutoReset, 1000);
 
 function saveToHistory(bpm, confidence) {
-    // Only save if BPM is significantly different from last entry or after some time
     const lastEntry = history[0];
     const now = new Date();
 
@@ -213,20 +215,17 @@ function saveToHistory(bpm, confidence) {
         };
 
         history.unshift(entry);
-
-        // Keep only last 50 entries
         if (history.length > 50) history.pop();
 
         saveHistory(entry);
-        renderHistory();
-        drawSparkline();
+        if (historyList) renderHistory();
+        if (sparklineCtx) drawSparkline();
     }
 }
 
 function drawSparkline() {
     if (!sparklineCtx || history.length < 2) return;
 
-    // Resize canvas to its display size
     const dpr = window.devicePixelRatio || 1;
     const rect = sparklineCanvas.getBoundingClientRect();
     sparklineCanvas.width = rect.width * dpr;
@@ -238,25 +237,18 @@ function drawSparkline() {
 
     sparklineCtx.clearRect(0, 0, width, height);
 
-    // Get min/max for scaling
     const bpms = history.map(h => h.bpm);
     const minBpm = Math.min(...bpms) - 10;
     const maxBpm = Math.max(...bpms) + 10;
     const range = maxBpm - minBpm;
 
-    // Drawing settings
     sparklineCtx.beginPath();
     sparklineCtx.strokeStyle = 'white';
     sparklineCtx.lineWidth = 2;
     sparklineCtx.lineJoin = 'round';
     sparklineCtx.lineCap = 'round';
 
-    // Move to the first point (oldest is at the end of history if unshifted)
-    // Actually history is unshifted, so index 0 is newest.
-    // Let's draw newest on the right.
-    const padding = 2;
-    const data = [...history].reverse(); // oldest to newest
-
+    const data = [...history].reverse();
     data.forEach((item, i) => {
         const x = (i / (data.length - 1)) * width;
         const y = height - ((item.bpm - minBpm) / range) * height;
@@ -270,7 +262,6 @@ function drawSparkline() {
 
     sparklineCtx.stroke();
 
-    // Fill under the line
     sparklineCtx.lineTo(width, height);
     sparklineCtx.lineTo(0, height);
     const gradient = sparklineCtx.createLinearGradient(0, 0, 0, height);
@@ -285,6 +276,7 @@ window.addEventListener('resize', drawSparkline);
 setTimeout(drawSparkline, 100);
 
 function renderHistory() {
+    if (!historyList) return;
     const fragment = document.createDocumentFragment();
 
     history.forEach(item => {
@@ -313,16 +305,16 @@ function renderHistory() {
 // Export logic
 if (exportBtn) {
     exportBtn.addEventListener('click', () => {
-    if (history.length === 0) return;
+        if (history.length === 0) return;
 
-    const csvContent = "data:text/csv;charset=utf-8,"
-        + "Timestamp,BPM,Confidence\n"
-        + history.map(e => `${e.timestamp},${e.bpm},${e.confidence}`).join("\n");
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + "Timestamp,BPM,Confidence\n"
+            + history.map(e => `${e.timestamp},${e.bpm},${e.confidence}`).join("\n");
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `pulse_bpm_history_${new Date().toISOString().split('T')[0]}.csv`);
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `pulse_bpm_history_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
