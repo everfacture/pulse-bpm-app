@@ -1,13 +1,10 @@
-import { createRealtimeBpmAnalyzer, getBiquadFilter } from 'realtime-bpm-analyzer';
+import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
 
 // State
 let isListening = false;
 let audioContext = null;
 let micStream = null;
 let source = null;
-let gainNode = null;
-let filterNode = null;
-let silentSink = null;
 let realtimeAnalyzer = null;
 let lastUpdateTime = Date.now();
 
@@ -55,16 +52,18 @@ async function startListening() {
         console.log('AudioContext created, state:', audioContext.state);
         
         // Get microphone stream
-        // Let browser DSP run by default; forced raw constraints made ambient input too quiet.
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Keep constraints explicit but lightweight for consistent mic capture.
+        micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                autoGainControl: false,
+                noiseSuppression: false
+            }
+        });
         console.log('Microphone access granted');
         
         // Create analyzer
-        realtimeAnalyzer = await createRealtimeBpmAnalyzer(audioContext, {
-            continuousAnalysis: true,
-            stabilizationTime: 12000,
-            muteTimeInIndexes: 6000
-        });
+        realtimeAnalyzer = await createRealtimeBpmAnalyzer(audioContext);
         console.log('Analyzer created');
         
         const onTempo = (data) => {
@@ -87,17 +86,7 @@ async function startListening() {
         
         // Connect audio graph
         source = audioContext.createMediaStreamSource(micStream);
-        gainNode = audioContext.createGain();
-        gainNode.gain.value = 4;
-        filterNode = getBiquadFilter(audioContext, { frequencyValue: 150, qualityValue: 1 });
-        silentSink = audioContext.createGain();
-        silentSink.gain.value = 0;
-
-        source.connect(gainNode);
-        gainNode.connect(filterNode);
-        filterNode.connect(realtimeAnalyzer.node);
-        realtimeAnalyzer.node.connect(silentSink);
-        silentSink.connect(audioContext.destination);
+        source.connect(realtimeAnalyzer.node);
         console.log('Audio connected');
         
         // Update UI
@@ -140,25 +129,10 @@ function stopListening() {
         source = null;
     }
 
-    if (filterNode) {
-        filterNode.disconnect();
-        filterNode = null;
-    }
-
-    if (gainNode) {
-        gainNode.disconnect();
-        gainNode = null;
-    }
-
     if (realtimeAnalyzer?.node) {
         realtimeAnalyzer.node.disconnect();
     }
     realtimeAnalyzer = null;
-
-    if (silentSink) {
-        silentSink.disconnect();
-        silentSink = null;
-    }
 
     if (micStream) {
         micStream.getTracks().forEach(track => track.stop());
