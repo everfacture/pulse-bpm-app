@@ -74,12 +74,12 @@ new RealTimeBpmAnalyzer({
 
 Pulse is currently in its MVP phase. Our development roadmap includes several advanced features to enhance the ambient detection experience:
 
-### Phase 2 (Upcoming)
-- [ ] **Sparkline Graph**: Visualise BPM trends over time.
-- [ ] **Genre Intelligence**: Automatic genre guessing based on detected BPM ranges.
-- [ ] **Contextual Suggestions**: Use-case tips (e.g., "Perfect for power walking").
-- [ ] **Persistent Storage**: IndexedDB integration for long-term history.
-- [ ] **Advanced Filtering**: Confidence-based auto-filtering for high-precision logging.
+### Phase 2 (Intelligence & Aesthetics)
+- [ ] **Music Recognition**: Integrate acoustic fingerprinting for Shazam-like track identification.
+- [ ] **Independent Deployment**: Automated GitHub Pages pipeline for an always-on public URL.
+- [ ] **Studio UI Refinement**: Pixel-perfect alignment, premium typography, and adaptive theme coloring.
+- [ ] **Sparkline Visualization**: Live real-time BPM trend graphs.
+- [ ] **Cloud Persistence**: Move beyond LocalStorage to a persistent cloud-synced database.
 
 ---
 
