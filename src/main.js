@@ -1,9 +1,12 @@
-import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
+import { createRealtimeBpmAnalyzer, getBiquadFilter } from 'realtime-bpm-analyzer';
 
 // State
 let isListening = false;
 let audioContext = null;
+let micStream = null;
 let source = null;
+let filterNode = null;
+let silentSink = null;
 let realtimeAnalyzer = null;
 let lastUpdateTime = Date.now();
 
@@ -51,7 +54,7 @@ async function startListening() {
         console.log('AudioContext created, state:', audioContext.state);
         
         // Get microphone stream
-        const stream = await navigator.mediaDevices.getUserMedia({ 
+        micStream = await navigator.mediaDevices.getUserMedia({
             audio: {
                 echoCancellation: false,
                 autoGainControl: false,
@@ -69,13 +72,25 @@ async function startListening() {
             console.log('BPM data:', data);
             if (data.bpm && data.bpm.length > 0) {
                 const topBpm = data.bpm[0];
-                updateDisplay(topBpm.tempo, topBpm.confidence);
+                updateDisplay(topBpm.tempo, normalizeConfidence(topBpm));
             }
+        });
+
+        realtimeAnalyzer.on('error', (err) => {
+            console.error('Analyzer error:', err);
+            statusText.innerText = 'Analyzer error';
         });
         
         // Connect audio graph
-        source = audioContext.createMediaStreamSource(stream);
-        source.connect(realtimeAnalyzer.node);
+        source = audioContext.createMediaStreamSource(micStream);
+        filterNode = getBiquadFilter(audioContext, { frequencyValue: 150, qualityValue: 1 });
+        silentSink = audioContext.createGain();
+        silentSink.gain.value = 0;
+
+        source.connect(filterNode);
+        filterNode.connect(realtimeAnalyzer.node);
+        realtimeAnalyzer.node.connect(silentSink);
+        silentSink.connect(audioContext.destination);
         console.log('Audio connected');
         
         // Update UI
@@ -112,7 +127,32 @@ async function startListening() {
 
 function stopListening() {
     console.log('Stopping listening...');
-    
+
+    if (source) {
+        source.disconnect();
+        source = null;
+    }
+
+    if (filterNode) {
+        filterNode.disconnect();
+        filterNode = null;
+    }
+
+    if (realtimeAnalyzer?.node) {
+        realtimeAnalyzer.node.disconnect();
+    }
+    realtimeAnalyzer = null;
+
+    if (silentSink) {
+        silentSink.disconnect();
+        silentSink = null;
+    }
+
+    if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+    }
+
     if (audioContext) {
         audioContext.close();
         audioContext = null;
@@ -178,6 +218,19 @@ function updateDisplay(bpm, confidence) {
     }
 }
 
+function normalizeConfidence(topBpm) {
+    if (Number.isFinite(topBpm.confidence) && topBpm.confidence > 0) {
+        return Math.max(0, Math.min(1, topBpm.confidence));
+    }
+
+    if (Number.isFinite(topBpm.count) && topBpm.count > 0) {
+        // Library primarily exposes "count"; normalize to [0,1] for UI.
+        return Math.max(0, Math.min(1, topBpm.count / 24));
+    }
+
+    return 0;
+}
+
 function getGenre(bpm) {
     if (bpm < 60) return 'LARGO';
     if (bpm < 76) return 'ADAGIO';
@@ -195,6 +248,11 @@ setInterval(() => {
     if (!isListening) return;
     
     const now = Date.now();
+
+    if (now - lastUpdateTime > 8000 && statusText && statusText.innerText === 'Listening...') {
+        statusText.innerText = 'No beat yet, move closer to speaker';
+    }
+
     if (now - lastUpdateTime > 5000 && confidenceFill && confidenceFill.style.width !== '0%') {
         resetRollingDigits();
         confidenceFill.style.width = '0%';
