@@ -28,11 +28,13 @@ body {
 #app {
     width: 100%;
     max-width: 480px;
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3rem;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 3.5rem;
 }
 
 header {
@@ -41,7 +43,7 @@ header {
 
 header h1 {
     font-weight: 900;
-    font-size: 3.5rem;
+    font-size: 3rem;
     letter-spacing: -0.06em;
     background: linear-gradient(180deg, #fff 0%, #aaa 100%);
     -webkit-background-clip: text;
@@ -82,13 +84,16 @@ header p {
 
 #bpm-display-container {
     display: flex;
-    font-size: 9rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 7rem;
     font-weight: 900;
     line-height: 1;
     letter-spacing: -0.05em;
-    height: 9rem;
+    height: 7rem;
     overflow: hidden;
     text-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+    margin: 2rem 0;
 }
 
 .digit-column {
@@ -194,20 +199,24 @@ input[type=range]::-webkit-slider-thumb {
 
 #listen-btn {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: var(--accent-color);
     color: white;
     font-family: inherit;
     font-weight: 800;
-    font-size: 1.1rem;
-    letter-spacing: 0.1em;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
     cursor: pointer;
-    box-shadow: 0 0 60px var(--accent-glow);
+    box-shadow: 0 0 50px var(--accent-glow);
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 #listen-btn:active {
@@ -345,15 +354,11 @@ footer {
     font-size: 0.7rem;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
 #history-list::-webkit-scrollbar {
     display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 #history-list {
     -ms-overflow-style: none;
-    /* IE and Edge */
     scrollbar-width: none;
-    /* Firefox */
 }

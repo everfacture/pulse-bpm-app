@@ -55,14 +55,6 @@ listenBtn.addEventListener('click', async () => {
 
 async function startListening() {
     try {
-        statusText.innerText = 'Checking Microphone...';
-
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasAudio = devices.some(d => d.kind === 'audioinput');
-        if (!hasAudio) {
-            throw new Error('No microphone detected');
-        }
-
         statusText.innerText = 'Requesting Microphone...';
 
         // Setup Audio Context

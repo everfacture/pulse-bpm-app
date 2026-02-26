@@ -79,12 +79,11 @@ Pulse has evolved from a weekend MVP to a professional Studio-grade tool.
 - [x] **Studio UI**: Odometer-style rolling numbers and glassmorphism.
 - [x] **Visual Trends**: Canvas-based sparklines for history.
 - [x] **Intelligence**: Granular genre identification (Largo to Prestissimo).
-- [x] **Persistence**: Migrated to IndexedDB for industrial-grade session logging.
 
 ### 🚀 Phase 6+ (Future)
+- [ ] **History & Persistence**: Industrial-grade session logging and IndexedDB browser.
 - [ ] **Music Recognition**: Integrate acoustic fingerprinting for track identification.
 - [ ] **Workflow Export**: Advanced integrations for DJ software and DAWs.
-- [ ] **Workout Mode**: Target BPM zones with haptic feedback.
 
 ---
 
