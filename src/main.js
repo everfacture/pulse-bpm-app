@@ -15,6 +15,16 @@ const listenBtn = document.getElementById('listen-btn');
 const btnText = document.getElementById('btn-text');
 const historyList = document.getElementById('history-list');
 const exportBtn = document.getElementById('export-btn');
+const genreBadge = document.getElementById('genre-badge');
+const sensitivitySlider = document.getElementById('sensitivity-slider');
+const sparklineCanvas = document.getElementById('sparkline');
+const sparklineCtx = sparklineCanvas.getContext('2d');
+
+let currentSensitivity = 0.8;
+
+sensitivitySlider.addEventListener('input', (e) => {
+    currentSensitivity = e.target.value / 100;
+});
 
 // Initialize history display
 renderHistory();
@@ -91,18 +101,35 @@ function updateDisplay(bpm, confidence) {
     const roundedBpm = Math.round(bpm);
     bpmDisplay.innerText = roundedBpm;
 
+    // Update Genre
+    genreBadge.innerText = getGenre(roundedBpm);
+
     const percentage = Math.min(100, Math.round(confidence * 100));
     confidenceFill.style.width = `${percentage}%`;
 
     // Update color based on confidence
-    if (confidence > 0.8) {
+    if (confidence > currentSensitivity) {
         confidenceFill.style.background = '#34c759'; // High
         saveToHistory(roundedBpm, confidence);
-    } else if (confidence > 0.4) {
+        genreBadge.style.color = '#fff';
+        genreBadge.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    } else if (confidence > currentSensitivity / 2) {
         confidenceFill.style.background = '#ff9f0a'; // Med
+        genreBadge.style.color = 'var(--text-secondary)';
     } else {
         confidenceFill.style.background = '#ff3b30'; // Low
+        genreBadge.style.color = 'var(--text-secondary)';
     }
+}
+
+function getGenre(bpm) {
+    if (bpm < 60) return 'MEDITATIVE';
+    if (bpm < 80) return 'LIGHT';
+    if (bpm < 120) return 'JAZZ / SLOW POP';
+    if (bpm < 140) return 'POP / HIP-HOP';
+    if (bpm < 160) return 'TECHNO / HOUSE';
+    if (bpm < 180) return 'DRILL / DNB';
+    return 'HARDCORE';
 }
 
 function saveToHistory(bpm, confidence) {
@@ -125,8 +152,70 @@ function saveToHistory(bpm, confidence) {
 
         localStorage.setItem('pulse_history', JSON.stringify(history));
         renderHistory();
+        drawSparkline();
     }
 }
+
+function drawSparkline() {
+    if (history.length < 2) return;
+
+    // Resize canvas to its display size
+    const dpr = window.devicePixelRatio || 1;
+    const rect = sparklineCanvas.getBoundingClientRect();
+    sparklineCanvas.width = rect.width * dpr;
+    sparklineCanvas.height = rect.height * dpr;
+    sparklineCtx.scale(dpr, dpr);
+
+    const width = rect.width;
+    const height = rect.height;
+
+    sparklineCtx.clearRect(0, 0, width, height);
+
+    // Get min/max for scaling
+    const bpms = history.map(h => h.bpm);
+    const minBpm = Math.min(...bpms) - 10;
+    const maxBpm = Math.max(...bpms) + 10;
+    const range = maxBpm - minBpm;
+
+    // Drawing settings
+    sparklineCtx.beginPath();
+    sparklineCtx.strokeStyle = 'white';
+    sparklineCtx.lineWidth = 2;
+    sparklineCtx.lineJoin = 'round';
+    sparklineCtx.lineCap = 'round';
+
+    // Move to the first point (oldest is at the end of history if unshifted)
+    // Actually history is unshifted, so index 0 is newest.
+    // Let's draw newest on the right.
+    const padding = 2;
+    const data = [...history].reverse(); // oldest to newest
+
+    data.forEach((item, i) => {
+        const x = (i / (data.length - 1)) * width;
+        const y = height - ((item.bpm - minBpm) / range) * height;
+
+        if (i === 0) {
+            sparklineCtx.moveTo(x, y);
+        } else {
+            sparklineCtx.lineTo(x, y);
+        }
+    });
+
+    sparklineCtx.stroke();
+
+    // Fill under the line
+    sparklineCtx.lineTo(width, height);
+    sparklineCtx.lineTo(0, height);
+    const gradient = sparklineCtx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    sparklineCtx.fillStyle = gradient;
+    sparklineCtx.fill();
+}
+
+// Initial draw
+window.addEventListener('resize', drawSparkline);
+setTimeout(drawSparkline, 100);
 
 function renderHistory() {
     historyList.innerHTML = '';

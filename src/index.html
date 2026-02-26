@@ -21,11 +21,19 @@
 
         <main>
             <div class="display-container">
+                <div id="genre-badge">GENRE</div>
                 <div id="bpm-display">--</div>
                 <div id="confidence-bar">
                     <div id="confidence-fill"></div>
                 </div>
                 <p id="status-text">Ready to listen</p>
+
+                <div class="settings-control">
+                    <div class="setting-row">
+                        <span>Sensitivity</span>
+                        <input type="range" id="sensitivity-slider" min="10" max="90" value="80">
+                    </div>
+                </div>
             </div>
 
             <button id="listen-btn">
@@ -46,6 +54,7 @@
                     </svg>
                 </button>
             </div>
+            <canvas id="sparkline"></canvas>
             <ul id="history-list">
                 <!-- History items will be injected here -->
             </ul>
