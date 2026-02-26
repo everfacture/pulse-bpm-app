@@ -1,0 +1,10 @@
+{
+    "config": {
+        "default": true,
+        "line-length": false,
+        "no-duplicate-header": {
+            "allow_different_levels": true
+        },
+        "no-inline-html": false
+    }
+}
