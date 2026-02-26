@@ -1,12 +1,10 @@
 import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
-import { getHistory, saveHistory } from './db.js';
 
 // State
 let isListening = false;
 let audioContext = null;
 let source = null;
 let realtimeAnalyzer = null;
-let history = [];
 let lastUpdateTime = Date.now();
 
 // Fixed sensitivity - no slider needed
@@ -23,14 +21,6 @@ const digitStrips = [
     document.querySelector('#digit-2 .digit-strip'),
     document.querySelector('#digit-3 .digit-strip')
 ];
-
-// Initialize
-try {
-    history = await getHistory();
-} catch (e) {
-    console.warn('IndexedDB unavailable');
-    history = [];
-}
 
 // Button handler
 listenBtn.addEventListener('click', async () => {

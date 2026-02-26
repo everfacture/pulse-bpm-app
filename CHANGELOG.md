@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.1 — 2026-02-26
+
+**Fixed:**
+- Build failure caused by `realtime-bpm-analyzer@5.0.1` package entry mismatch.
+- Dependency now pinned to `realtime-bpm-analyzer@5.0.0` for stable resolution.
+
+**Changed:**
+- Version alignment: `package.json` and changelog now both track `1.3.1`.
+- CI and deploy workflows updated to Node 22 and `npm ci`.
+- README messaging updated for lightweight one-button positioning and iterative roadmap.
+- Spec updated to separate shipped functionality from backlog items.
+
 ## 1.3.0 — 2026-02-26
 
 **Fixed:**

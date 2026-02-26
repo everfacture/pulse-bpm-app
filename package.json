@@ -1,8 +1,11 @@
 {
   "name": "pulse_bpm_app",
-  "version": "1.0.0",
+  "version": "1.3.1",
   "description": "Studio-grade ambient BPM detector for real-time music tempo analysis.",
   "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -19,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "lucide": "^0.575.0",
-    "realtime-bpm-analyzer": "^5.0.1",
+    "realtime-bpm-analyzer": "5.0.0",
     "vite": "^7.3.1",
     "vite-plugin-pwa": "^1.2.0"
   }

@@ -1,116 +1,104 @@
-# Pulse BPM App — Project Spec
+# Pulse BPM App - Product and Technical Spec
 
-**Status:** MVP Spec Complete  
+**Status:** Stabilization pass complete for v1.3.1  
 **Type:** PWA (Progressive Web App)  
-**Stack:** Vanilla JS + realtime-bpm-analyzer + Vite  
-**Idea Source:** Shazam-like ambient BPM detector  
+**Stack:** Vanilla JS + `realtime-bpm-analyzer` + Vite  
+**Positioning:** Lightweight, one-button ambient BPM detection
 
 ---
 
 ## Concept
 
-Real-time BPM detection via phone microphone. One button. One number. Track changes over time.
+Pulse is built for fast ambient tempo checks:
 
-**Differentiator:** Existing apps (Soundbrenner, Tempo) require file import or manual tapping. This is ambient detection — point phone at speaker, get BPM live.
+1. Point the phone at a speaker
+2. Press **LISTEN**
+3. Read BPM and confidence in real time
+
+No file import. No manual tap-tempo loop.
 
 ---
 
-## Tech Stack Decision
+## Technical Direction
 
 | Option | Verdict | Notes |
 |--------|---------|-------|
-| **PWA (Chosen)** | ✅ | Ship today, one codebase, no app store |
-| React Native | ❌ | Heavier, native modules needed for audio |
-| Flutter | ❌ | Dart learning curve, overkill for MVP |
+| **PWA (Chosen)** | Yes | Single codebase, fast iteration, no app-store overhead |
+| React Native | No | Higher complexity for current product scope |
+| Flutter | No | Overkill for a single-screen BPM detector |
 
-**Core Library:** `realtime-bpm-analyzer` (TypeScript, zero deps, Web Audio API)
-
----
-
-## MVP Features
-
-### Phase 1 & 2 (Complete)
-- [x] Big red "LISTEN" button
-- [x] Odometer-style real-time BPM display
-- [x] Confidence indicator (low/med/high)
-- [x] Genre identification (Largo to Prestissimo)
-- [x] Visual trends (Sparkline history)
-- [x] Persistence (IndexedDB session logging)
+**Core dependency:** `realtime-bpm-analyzer` pinned to `5.0.0` for stable package entry resolution.
 
 ---
 
-## BPM Detection Standards
+## Shipped Features (Current)
 
-Pulse is calibrated to detect the full spectrum of global music tempos, from classical solemnity to high-energy electronic subgenres.
+- [x] One-button listen/start-stop flow
+- [x] Real-time rolling BPM display
+- [x] Confidence bar with threshold-based color states
+- [x] Tempo class badge (Largo to Prestissimo mapping)
+- [x] PWA build/deploy pipeline
+- [x] IndexedDB module scaffold for local history data
 
-| Classification | BPM Range |
-|----------------|-----------|
-| Grave (Slowest) | < 40 |
-| Meditative (Largo) | 40-60 |
-| Chill (Adagio) | 60-76 |
-| Mid-Tempo (Andante)| 76-108 |
-| Pop/Swing (Moderato)| 108-120 |
-| House/Disco | 120-130 |
-| Techno/Trance | 130-150 |
-| DnB/Hardstyle | 150-168 |
-| Hardcore (Presto) | 168-200 |
-| Extreme (Prestissimo)| > 200 |
+## Backlog / Not Yet Shipped
 
-**Detection limits:** 20-300 BPM (Software window optimized for 40-200 BPM)  
-**Confidence threshold:** Adjustable via Studio Slider (Default 0.8)
+- [ ] In-app history surface
+- [ ] Sparkline trend visualization
+- [ ] History export workflow
 
 ---
 
-## Technical Notes
+## BPM and Confidence Behavior
+
+| Category | BPM Range |
+|----------|-----------|
+| Largo | < 60 |
+| Adagio | 60-75 |
+| Andante | 76-107 |
+| Moderato | 108-119 |
+| House | 120-129 |
+| Techno | 130-149 |
+| DnB | 150-167 |
+| Hardcore | 168-199 |
+| Prestissimo | >= 200 |
+
+**Display window in app:** 40-200 BPM  
+**Confidence threshold:** fixed at `0.75` in current UI (no live slider in v1.3.1)
+
+---
+
+## Runtime Pipeline
 
 ```javascript
-// Core audio pipeline
 const audioContext = new AudioContext();
 const analyzer = await createRealtimeBpmAnalyzer(audioContext);
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 const source = audioContext.createMediaStreamSource(stream);
+
 source.connect(analyzer.node);
 
 analyzer.on('bpm', (data) => {
-  displayBpm(data.bpm.tempo);
-  logToHistory(data.bpm.tempo);
+  if (data.bpm && data.bpm.length > 0) {
+    const top = data.bpm[0];
+    updateDisplay(top.tempo, top.confidence);
+  }
 });
 ```
 
 ---
 
-## Competitive Landscape
+## Constraints and Known Limits
 
-| App | How It Works | Ambient Detection? |
-|-----|--------------|-------------------|
-| Soundbrenner | Manual tap | ❌ No |
-| Tempo | File import | ❌ No |
-| BeatGauge | iTunes library | ❌ No |
-| Live BPM | Microphone input | ✅ Yes (closest competitor) |
-| **Pulse (this)** | Microphone + logging | ✅ Yes + history |
+- Most reliable on clear percussive content
+- Less reliable on ambient/noise-heavy material
+- No guarantee of stable BPM lock in all acoustic conditions
 
 ---
 
-## Research Sources
+## Improvement Philosophy
 
-1. **realtime-bpm-analyzer** — https://github.com/dlepaux/realtime-bpm-analyzer
-2. **web-audio-beat-detector** — https://github.com/chrisguttandin/web-audio-beat-detector
-3. **Essentia.js** — https://essentia.upf.edu/ (comprehensive but heavy)
-4. **HN: BPM Finder** — Show HN post on advanced audio analysis toolkit
+Pulse is intentionally minimal today and iterates in small, practical steps:
 
----
-
-## Project Status
-
-Pulse has graduated from the MVP phase to a professional-grade ambient detector.
-
-### ✅ Completed Milestones
-- [x] **Core Engine**: Integrated `realtime-bpm-analyzer`.
-- [x] **Studio UI**: Single-screen, high-performance interface.
-- [x] **PWA Layer**: Full offline support and mobile-first responsive design.
-- [x] **Validated Standards**: 40-200 BPM window with granular genre intelligence.
-
----
-
-_Research compiled: 2026-02-26_  
-_Source: Web research on BPM detection libraries_
+- Keep the main flow fast and dependable
+- Add features only when they do not compromise listen-speed
+- Prioritize stability and trust over scope expansion
