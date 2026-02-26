@@ -3,7 +3,7 @@
 **Status:** MVP Spec Complete  
 **Type:** PWA (Progressive Web App)  
 **Stack:** Vanilla JS + realtime-bpm-analyzer + Vite  
-**Idea Source:** Ameen (cousin) — Shazam-like ambient BPM detector  
+**Idea Source:** Shazam-like ambient BPM detector  
 
 ---
 
