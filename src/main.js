@@ -24,6 +24,11 @@ const historyList = document.getElementById('history-list');
 const exportBtn = document.getElementById('export-btn');
 const genreBadge = document.getElementById('genre-badge');
 const sensitivitySlider = document.getElementById('sensitivity-slider');
+const digitStrips = [
+    document.querySelector('#digit-1 .digit-strip'),
+    document.querySelector('#digit-2 .digit-strip'),
+    document.querySelector('#digit-3 .digit-strip')
+];
 const sparklineCanvas = document.getElementById('sparkline');
 const sparklineCtx = sparklineCanvas.getContext('2d');
 
@@ -50,6 +55,14 @@ listenBtn.addEventListener('click', async () => {
 
 async function startListening() {
     try {
+        statusText.innerText = 'Checking Microphone...';
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasAudio = devices.some(d => d.kind === 'audioinput');
+        if (!hasAudio) {
+            throw new Error('No microphone detected');
+        }
+
         statusText.innerText = 'Requesting Microphone...';
 
         // Setup Audio Context
@@ -105,8 +118,32 @@ function stopListening() {
     statusText.innerText = 'Ready to listen';
 
     // Reset display
-    bpmDisplay.innerText = '--';
+    resetRollingDigits();
     confidenceFill.style.width = '0%';
+}
+
+function resetRollingDigits() {
+    digitStrips.forEach(strip => {
+        strip.style.transform = 'translateY(-1000%)'; // The '-' character is at the 11th position (index 10)
+    });
+}
+
+function updateRollingDigits(bpm) {
+    const digits = bpm.toString().padStart(3, '0').split('');
+
+    digits.forEach((digit, i) => {
+        const val = parseInt(digit);
+        // Each digit is 1/11 of the strip height (0-9 and -)
+        const y = (val / 11) * 100;
+        digitStrips[i].style.transform = `translateY(-${y}%)`;
+
+        // Hide leading zero if it's the first digit
+        if (i === 0 && val === 0) {
+            digitStrips[i].parentElement.style.opacity = '0';
+        } else {
+            digitStrips[i].parentElement.style.opacity = '1';
+        }
+    });
 }
 
 function updateDisplay(bpm, confidence) {
@@ -114,7 +151,8 @@ function updateDisplay(bpm, confidence) {
     if (bpm < 40 || bpm > 200) return;
 
     const roundedBpm = Math.round(bpm);
-    bpmDisplay.innerText = roundedBpm;
+    updateRollingDigits(roundedBpm);
+    lastUpdateTime = Date.now();
 
     // Update Genre
     genreBadge.innerText = getGenre(roundedBpm);
@@ -138,14 +176,32 @@ function updateDisplay(bpm, confidence) {
 }
 
 function getGenre(bpm) {
-    if (bpm < 60) return 'MEDITATIVE';
-    if (bpm < 80) return 'LIGHT';
-    if (bpm < 120) return 'JAZZ / SLOW POP';
-    if (bpm < 140) return 'POP / HIP-HOP';
-    if (bpm < 160) return 'TECHNO / HOUSE';
-    if (bpm < 180) return 'DRILL / DNB';
-    return 'HARDCORE';
+    if (bpm < 60) return 'AMBIENT / MEDITATIVE';
+    if (bpm < 80) return 'LO-FI / CHILL';
+    if (bpm < 95) return 'HIP-HOP / R&B';
+    if (bpm < 110) return 'JAZZ / FUNK';
+    if (bpm < 124) return 'HOUSE / DISCO';
+    if (bpm < 128) return 'DEEP HOUSE / TECH';
+    if (bpm < 135) return 'TECHNO / TRANCE';
+    if (bpm < 145) return 'TRAP / DUBSTEP';
+    if (bpm < 165) return 'DRILL / DNB';
+    if (bpm < 185) return 'HARDSTYLE / PSY';
+    return 'HARDCORE / Gabber';
 }
+
+let lastUpdateTime = Date.now();
+function checkAutoReset() {
+    if (!isListening) return;
+
+    const now = Date.now();
+    // If no quality update for 5 seconds, reset state for new track detection
+    if (now - lastUpdateTime > 5000 && confidenceFill.style.width !== '0%') {
+        resetRollingDigits();
+        confidenceFill.style.width = '0%';
+        genreBadge.innerText = 'WAITING...';
+    }
+}
+setInterval(checkAutoReset, 1000);
 
 function saveToHistory(bpm, confidence) {
     // Only save if BPM is significantly different from last entry or after some time
