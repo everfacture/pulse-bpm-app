@@ -13,5 +13,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Progressive Web App (PWA) support.
 - Local storage for history tracking.
 - CSV export for historical data.
-- Premium dark mode interface following `code_craft.md` standards.
+- Premium dark mode interface following established engineering standards.
 - Re-structured repository using "Clean Root Pattern".
