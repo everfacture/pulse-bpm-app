@@ -1,38 +1,29 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## 1.2.0 — 2026-02-26
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+**Fixed:**
+- Listen button actually works now (sparklineCanvas null check was breaking everything)
+- CSP relaxed so mic permissions work properly
 
-## [1.2.0] - 2026-02-26
+**Changed:**
+- Moved history/export to "future" — core detection is the focus now
+- Button 15% smaller, actually centered
 
-### Fixed
-- Restored microphone access by relaxing CSP and removing redundant device enumeration checks.
-- Perfected UI alignment: Reduced "LISTEN" button size by 15% and centered all primary components.
+## 1.1.0 — 2026-02-26
 
-### Changed
-- Refined "Studio" typography and container spacing.
-- Moved History and Export features to the future roadmap to focus on core stability.
+**Added:**
+- Genre detection (Largo → Prestissimo)
+- BPM validation (40-200 range)
+- Odometer-style digit display
 
-## [1.1.0] - 2026-02-26
+**Changed:**
+- Cleaned up docs — removed fluff
 
-### Added
-- New high-fidelity "Studio" hero logo (v2).
-- Scientifically validated BPM detection window (40-200 BPM).
-- Expanded genre intelligence (Largo, Adagio, Andante, Moderato, etc.).
+## 1.0.0 — 2026-02-26
 
-### Changed
-- Scrubbed all personal and conversational references from `spec.md` and `README.md`.
-- Updated architecture diagram to reflect IndexedDB session logging.
-
-## [1.0.0] - 2026-02-26
-
-### Added
-- Initial implementation of Pulse BPM App.
-- Real-time ambient BPM detection using `realtime-bpm-analyzer`.
-- Progressive Web App (PWA) support.
-- Local storage for history tracking.
-- CSV export for historical data.
-- Premium dark mode interface following established engineering standards.
-- Re-structured repository using "Clean Root Pattern".
+**Shipped:**
+- Real-time BPM detection
+- PWA support
+- Dark mode UI
+- IndexedDB history

@@ -1,111 +1,75 @@
-# PULSE — Ambient BPM Detector
+# Pulse
 
-<p align="center">
-  <img src="./assets/hero-banner.png" width="600" alt="Pulse App Hero">
-</p>
+**Real-time ambient BPM detection. No tapping, no imports—just listen.**
 
-[![Build Status](https://github.com/everfacture/pulse-bpm-app/actions/workflows/build.yml/badge.svg)](https://github.com/everfacture/pulse-bpm-app/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-
-**PULSE** is a high-performance Progressive Web App (PWA) designed for real-time, ambient BPM detection. No tapping, no file imports—just point your microphone at the source and get an accurate beat-per-minute reading instantly.
-
-[**Get Started**](#getting-started) | [**Architecture**](#architecture) | [**Contributing**](#contributing) | [**Changelog**](./CHANGELOG.md)
+[Live Demo](https://everfacture.github.io/pulse-bpm-app/) · [MIT License](./LICENSE)
 
 ---
 
-## 🚀 Getting Started
+## What is this?
 
-### Quick Install
+Point your phone at a speaker. Get the BPM. That's it.
+
+Existing apps make you tap beats or import files. This doesn't. It uses your microphone and the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) to detect tempo in real-time.
+
+Built in a weekend because I wanted a Shazam-for-BPM and couldn't find one that didn't suck.
+
+## Quick Start
 
 ```bash
-# Clone the repository
 git clone https://github.com/everfacture/pulse-bpm-app.git
-
-# Enter the project directory
 cd pulse-bpm-app
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-### Usage
-1. Open the app in a modern browser (Chrome/Safari recommended).
-2. Grant microphone permissions.
-3. Click the **LISTEN** button while music is playing.
-4. Watch the real-time BPM and confidence levels populate.
+Open `http://localhost:5173`. Grant mic access. Press **LISTEN**.
 
----
+## How it works
 
-## 🏗 Architecture
-
-Pulse follows a modular Web Audio API pipeline for efficient signal processing.
-
-```text
-[ Microphone ]  -->  [ AudioContext ]  -->  [ RealTimeBpmAnalyzer ]
-                                                      |
-                                                      v
-[ Export (.csv) ] <--- [ IndexedDB ] <--- [ UI State Manager ]
+```
+Mic → AudioContext → realtime-bpm-analyzer → Display
+                    ↓
+               IndexedDB (history)
 ```
 
-### Key Subsystems
-- **[Audio Engine](./src/main.js)**: Orchestrates the Web Audio pipeline and analyzer lifecycle.
-- **[UI Core](./src/style.css)**: Premium dark-mode interface with glassmorphism and reactive animations.
-- **[PWA Layer](./vite.config.js)**: Service worker registration and offline manifests via `vite-plugin-pwa`.
+- **Zero dependencies** except `realtime-bpm-analyzer` (which is excellent)
+- **PWA-ready** — install to home screen, works offline
+- **Privacy-first** — no audio leaves your device, ever
+
+## Tech Stack
+
+| Layer | Choice | Why |
+|-------|--------|-----|
+| Core | `realtime-bpm-analyzer` | Zero deps, Web Audio API, just works |
+| Build | Vite | Fast, simple, handles the PWA manifest |
+| UI | Vanilla JS + CSS | No framework bloat for a single-screen app |
+| Storage | IndexedDB | Async, structured, survives refresh |
+
+## The UI
+
+- **Odometer digits** — rolling numbers like a vintage tape deck
+- **Confidence bar** — green = trust it, red = maybe not
+- **Genre badge** — translates BPM to musical terms (Largo → Prestissimo)
+- **Dark mode only** — because light mode is for people who don't code at 2am
+
+## Limitations
+
+- Works best with clear rhythmic content (EDM, hip-hop, pop)
+- Struggles with ambient/noise/free jazz (no clear beat)
+- Max reliable detection: ~200 BPM
+- Min reliable detection: ~40 BPM
+
+## Roadmap (maybe)
+
+- [ ] History persistence with export
+- [ ] Acoustic fingerprinting for track ID
+- [ ] Tap-to-sync for DJ software
+
+## License
+
+MIT. Fork it. Remix it. Ship it.
 
 ---
 
-## ⚙️ Configuration
-
-Pulse is configured out of the box for optimal ambient detection. To tune the sensitivity, modify the constructor in `src/main.js`:
-
-```javascript
-import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
-
-const analyzer = await createRealtimeBpmAnalyzer(audioContext);
-analyzer.on('bpm', (data) => {
-    // Access real-time tempo and confidence
-    const { tempo, confidence } = data.bpm[0];
-});
-```
-
----
-
-## 🗺️ Roadmap
-
-Pulse has evolved from a weekend MVP to a professional Studio-grade tool.
-
-### ✅ Phase 1-5 (Complete)
-- [x] **Ambient Detection**: Real-time microphone analysis.
-- [x] **Studio UI**: Odometer-style rolling numbers and glassmorphism.
-- [x] **Visual Trends**: Canvas-based sparklines for history.
-- [x] **Intelligence**: Granular genre identification (Largo to Prestissimo).
-
-### 🚀 Phase 6+ (Future)
-- [ ] **History & Persistence**: Industrial-grade session logging and IndexedDB browser.
-- [ ] **Music Recognition**: Integrate acoustic fingerprinting for track identification.
-- [ ] **Workflow Export**: Advanced integrations for DJ software and DAWs.
-
----
-
-## 🔐 Security & Permissions
-
-Pulse is built with privacy in mind:
-- **Zero Cloud Processing**: All audio analysis is performed locally in the browser sandbox.
-- **Permission Boundary**: Microphone access is only requested when strictly necessary (upon clicking Listen).
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
+*Built with AI assistance because shipping > perfect.*
