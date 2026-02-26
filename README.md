@@ -46,7 +46,7 @@ Pulse follows a modular Web Audio API pipeline for efficient signal processing.
 [ Microphone ]  -->  [ AudioContext ]  -->  [ RealTimeBpmAnalyzer ]
                                                       |
                                                       v
-[ Export (.csv) ] <--- [ LocalStorage ] <--- [ UI State Manager ]
+[ Export (.csv) ] <--- [ IndexedDB ] <--- [ UI State Manager ]
 ```
 
 ### Key Subsystems
@@ -72,14 +72,19 @@ new RealTimeBpmAnalyzer({
 
 ## 🗺️ Roadmap
 
-Pulse is currently in its MVP phase. Our development roadmap includes several advanced features to enhance the ambient detection experience:
+Pulse has evolved from a weekend MVP to a professional Studio-grade tool.
 
-### Phase 2 (Intelligence & Aesthetics)
-- [ ] **Music Recognition**: Integrate acoustic fingerprinting for Shazam-like track identification.
-- [ ] **Independent Deployment**: Automated GitHub Pages pipeline for an always-on public URL.
-- [ ] **Studio UI Refinement**: Pixel-perfect alignment, premium typography, and adaptive theme coloring.
-- [ ] **Sparkline Visualization**: Live real-time BPM trend graphs.
-- [ ] **Cloud Persistence**: Move beyond LocalStorage to a persistent cloud-synced database.
+### ✅ Phase 1-5 (Complete)
+- [x] **Ambient Detection**: Real-time microphone analysis.
+- [x] **Studio UI**: Odometer-style rolling numbers and glassmorphism.
+- [x] **Visual Trends**: Canvas-based sparklines for history.
+- [x] **Intelligence**: Granular genre identification (Largo to Prestissimo).
+- [x] **Persistence**: Migrated to IndexedDB for industrial-grade session logging.
+
+### 🚀 Phase 6+ (Future)
+- [ ] **Music Recognition**: Integrate acoustic fingerprinting for track identification.
+- [ ] **Workflow Export**: Advanced integrations for DJ software and DAWs.
+- [ ] **Workout Mode**: Target BPM zones with haptic feedback.
 
 ---
 

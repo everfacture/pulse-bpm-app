@@ -176,17 +176,16 @@ function updateDisplay(bpm, confidence) {
 }
 
 function getGenre(bpm) {
-    if (bpm < 60) return 'AMBIENT / MEDITATIVE';
-    if (bpm < 80) return 'LO-FI / CHILL';
-    if (bpm < 95) return 'HIP-HOP / R&B';
-    if (bpm < 110) return 'JAZZ / FUNK';
-    if (bpm < 124) return 'HOUSE / DISCO';
-    if (bpm < 128) return 'DEEP HOUSE / TECH';
-    if (bpm < 135) return 'TECHNO / TRANCE';
-    if (bpm < 145) return 'TRAP / DUBSTEP';
-    if (bpm < 165) return 'DRILL / DNB';
-    if (bpm < 185) return 'HARDSTYLE / PSY';
-    return 'HARDCORE / Gabber';
+    if (bpm < 40) return 'SLOWEST (GRAVE)';
+    if (bpm < 60) return 'MEDITATIVE (LARGO)';
+    if (bpm < 76) return 'CHILL (ADAGIO)';
+    if (bpm < 108) return 'MID-TEMPO (ANDANTE)';
+    if (bpm < 120) return 'POP / SWING (MODERATO)';
+    if (bpm < 130) return 'HOUSE / DISCO';
+    if (bpm < 150) return 'TECHNO / TRANCE';
+    if (bpm < 168) return 'DNB / HARDSTYLE (ALLEGRO)';
+    if (bpm < 200) return 'HARDCORE (PRESTO)';
+    return 'EXTREME (PRESTISSIMO)';
 }
 
 let lastUpdateTime = Date.now();

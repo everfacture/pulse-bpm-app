@@ -45,19 +45,25 @@ Real-time BPM detection via phone microphone. One button. One number. Track chan
 
 ---
 
-## BPM Ranges
+## BPM Detection Standards
 
-| Genre/Use Case | BPM Range |
+Pulse is calibrated to detect the full spectrum of global music tempos, from classical solemnity to high-energy electronic subgenres.
+
+| Classification | BPM Range |
 |----------------|-----------|
-| Meditative | 40-60 |
-| Light music | 60-80 |
-| Jazz | 80-120 |
-| Pop/Hip-hop | 90-130 |
-| Techno/Trance | 120-150 |
-| Drill/DnB | 150-180 |
+| Grave (Slowest) | < 40 |
+| Meditative (Largo) | 40-60 |
+| Chill (Adagio) | 60-76 |
+| Mid-Tempo (Andante)| 76-108 |
+| Pop/Swing (Moderato)| 108-120 |
+| House/Disco | 120-130 |
+| Techno/Trance | 130-150 |
+| DnB/Hardstyle | 150-168 |
+| Hardcore (Presto) | 168-200 |
+| Extreme (Prestissimo)| > 200 |
 
-**Detection limits:** Min 40 BPM, Max 200 BPM  
-**Filter threshold:** Confidence >= 0.6
+**Detection limits:** 20-300 BPM (Software window optimized for 40-200 BPM)  
+**Confidence threshold:** Adjustable via Studio Slider (Default 0.8)
 
 ---
 
