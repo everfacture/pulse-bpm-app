@@ -12,7 +12,7 @@ Point your phone at a speaker. Get the BPM. That's it.
 
 Existing apps make you tap beats or import files. This doesn't. It uses your microphone and the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) to detect tempo in real-time.
 
-Built in a weekend because I wanted a Shazam-for-BPM and couldn't find one that didn't suck.
+Built in an afternoon for my cousin because he wanted a Shazam-for-BPM and couldn't find one that didn't suck.
 
 ## Quick Start
 
@@ -51,7 +51,7 @@ Mic → AudioContext → realtime-bpm-analyzer → Display
 - **Odometer digits** — rolling numbers like a vintage tape deck
 - **Confidence bar** — green = trust it, red = maybe not
 - **Genre badge** — translates BPM to musical terms (Largo → Prestissimo)
-- **Dark mode only** — because light mode is for people who don't code at 2am
+- **Dark mode only**
 
 ## Limitations
 
