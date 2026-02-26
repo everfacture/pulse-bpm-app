@@ -63,10 +63,12 @@ Pulse follows a modular Web Audio API pipeline for efficient signal processing.
 Pulse is configured out of the box for optimal ambient detection. To tune the sensitivity, modify the constructor in `src/main.js`:
 
 ```javascript
-new RealTimeBpmAnalyzer({
-    continuousAnalysis: true,
-    stabilizationTime: 3000, // ms to wait for stable reading
-    onBpmEvent: (data) => { ... }
+import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
+
+const analyzer = await createRealtimeBpmAnalyzer(audioContext);
+analyzer.on('bpm', (data) => {
+    // Access real-time tempo and confidence
+    const { tempo, confidence } = data.bpm[0];
 });
 ```
 
