@@ -70,6 +70,19 @@ new RealTimeBpmAnalyzer({
 
 ---
 
+## 🗺️ Roadmap
+
+Based on the [Project Spec](./docs/spec.md), we are currently in Phase 1 (MVP). Future enhancements include:
+
+### Phase 2 (Upcoming)
+- [ ] **Sparkline Graph**: Visualise BPM trends over time.
+- [ ] **Genre Intelligence**: Automatic genre guessing based on detected BPM ranges.
+- [ ] **Contextual Suggestions**: Use-case tips (e.g., "Perfect for power walking").
+- [ ] **Persistent Storage**: IndexedDB integration for long-term history.
+- [ ] **Advanced Filtering**: Confidence-based auto-filtering for high-precision logging.
+
+---
+
 ## 🔐 Security & Permissions
 
 Pulse is built with privacy in mind:
