@@ -1,9 +1,5 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
     base: '/pulse-bpm-app/',
@@ -11,11 +7,6 @@ export default defineConfig({
     build: {
         outDir: '../dist',
         emptyOutDir: true,
-    },
-    resolve: {
-        alias: {
-            'realtime-bpm-analyzer': path.resolve(__dirname, 'node_modules/realtime-bpm-analyzer/dist/dist/index.esm.js')
-        }
     },
     plugins: [
         VitePWA({

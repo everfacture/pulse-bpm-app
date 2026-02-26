@@ -10,9 +10,14 @@ let history = [];
 
 // Initialize history from IndexedDB
 async function init() {
-    history = await getHistory();
+    try {
+        history = await getHistory();
+    } catch (e) {
+        console.warn('IndexedDB unavailable, using memory only');
+        history = [];
+    }
     renderHistory();
-    setTimeout(drawSparkline, 100);
+    if (sparklineCtx) setTimeout(drawSparkline, 100);
 }
 init();
 const bpmDisplay = document.getElementById('bpm-display');
@@ -30,7 +35,7 @@ const digitStrips = [
     document.querySelector('#digit-3 .digit-strip')
 ];
 const sparklineCanvas = document.getElementById('sparkline');
-const sparklineCtx = sparklineCanvas.getContext('2d');
+const sparklineCtx = sparklineCanvas?.getContext('2d') ?? null;
 
 let currentSensitivity = 0.8;
 
@@ -219,7 +224,7 @@ function saveToHistory(bpm, confidence) {
 }
 
 function drawSparkline() {
-    if (history.length < 2) return;
+    if (!sparklineCtx || history.length < 2) return;
 
     // Resize canvas to its display size
     const dpr = window.devicePixelRatio || 1;
@@ -306,7 +311,8 @@ function renderHistory() {
 }
 
 // Export logic
-exportBtn.addEventListener('click', () => {
+if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
     if (history.length === 0) return;
 
     const csvContent = "data:text/csv;charset=utf-8,"
@@ -317,7 +323,8 @@ exportBtn.addEventListener('click', () => {
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `pulse_bpm_history_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+}
