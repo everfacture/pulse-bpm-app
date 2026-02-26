@@ -1,13 +1,20 @@
 import { createRealtimeBpmAnalyzer } from 'realtime-bpm-analyzer';
+import { getHistory, saveHistory } from './db.js';
 
 // State variables
 let isListening = false;
 let audioContext = null;
 let source = null;
 let realtimeAnalyzer = null;
-let history = JSON.parse(localStorage.getItem('pulse_history') || '[]');
+let history = [];
 
-// DOM Elements
+// Initialize history from IndexedDB
+async function init() {
+    history = await getHistory();
+    renderHistory();
+    setTimeout(drawSparkline, 100);
+}
+init();
 const bpmDisplay = document.getElementById('bpm-display');
 const confidenceFill = document.getElementById('confidence-fill');
 const statusText = document.getElementById('status-text');
@@ -158,7 +165,7 @@ function saveToHistory(bpm, confidence) {
         // Keep only last 50 entries
         if (history.length > 50) history.pop();
 
-        localStorage.setItem('pulse_history', JSON.stringify(history));
+        saveHistory(entry);
         renderHistory();
         drawSparkline();
     }
