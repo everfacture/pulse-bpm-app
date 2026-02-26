@@ -45,7 +45,7 @@ Real-time BPM detection via phone microphone. One button. One number. Track chan
 
 ---
 
-## BPM Ranges (Ameen's Research)
+## BPM Ranges
 
 | Genre/Use Case | BPM Range |
 |----------------|-----------|
@@ -111,4 +111,4 @@ analyzer.on('bpm', (data) => {
 ---
 
 _Research compiled: 2026-02-26_  
-_Source: Session with Ameen (audio note), web research on BPM detection libraries_
+_Source: Web research on BPM detection libraries_
