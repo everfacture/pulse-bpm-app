@@ -73,6 +73,14 @@ async function startListening() {
         bpmDisplay.innerText = '--';
         confidenceFill.style.width = '0%';
 
+        // Handle background state
+        audioContext.onstatechange = () => {
+            if (audioContext.state === 'suspended' && isListening) {
+                stopListening();
+                statusText.innerText = 'Paused (tab inactive)';
+            }
+        };
+
     } catch (err) {
         console.error('Error starting audio:', err);
         statusText.innerText = 'Microphone access denied';
@@ -218,7 +226,7 @@ window.addEventListener('resize', drawSparkline);
 setTimeout(drawSparkline, 100);
 
 function renderHistory() {
-    historyList.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
     history.forEach(item => {
         const li = document.createElement('li');
@@ -236,8 +244,11 @@ function renderHistory() {
             <span class="conf ${confClass}">${confLabel}</span>
         `;
 
-        historyList.appendChild(li);
+        fragment.appendChild(li);
     });
+
+    historyList.innerHTML = '';
+    historyList.appendChild(fragment);
 }
 
 // Export logic
