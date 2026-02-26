@@ -2,7 +2,7 @@
 
 ![Pulse Hero Logo](./assets/logo.png)
 
-[![Build Status](https://github.com/[USER_OR_ORG]/pulse-bpm-app/actions/workflows/build.yml/badge.svg)](https://github.com/[USER_OR_ORG]/pulse-bpm-app/actions)
+[![Build Status](https://github.com/everfacture/pulse-bpm-app/actions/workflows/build.yml/badge.svg)](https://github.com/everfacture/pulse-bpm-app/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
@@ -18,7 +18,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/[USER_OR_ORG]/pulse-bpm-app.git
+git clone https://github.com/everfacture/pulse-bpm-app.git
 
 # Enter the project directory
 cd pulse-bpm-app
