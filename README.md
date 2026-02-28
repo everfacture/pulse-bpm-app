@@ -1,6 +1,12 @@
-# Pulse
+# <div align="center"><a href="banner.html">Pulse</a></div>
 
 **Instant, lightweight, one-button ambient BPM detection.**
+
+<p align="center">
+  <img src="banner.png" alt="Pulse Banner" onerror="this.style.display='none'">
+  <br>
+  <em><a href="banner.html">View interactive banner here</a></em>
+</p>
 
 [Live Demo](https://everfacture.github.io/pulse-bpm-app/) | [MIT License](./LICENSE)
 

@@ -1,84 +1,228 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pulse — Ambient BPM Detector</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pulse - Ambient BPM Detector</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="./style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' blob:; media-src 'self' blob:; img-src 'self' data:;">
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#F97316", // Neon Orange
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#050505", // True black/near black
+                        "card-dark": "#121212",
+                        "card-light": "#FFFFFF",
+                        "glow-orange": "rgba(249, 115, 22, 0.6)",
+                        "glow-white": "rgba(255, 255, 255, 0.3)",
+                    },
+                    fontFamily: {
+                        display: ["Orbitron", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        digital: ["Share Tech Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    animation: {
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'wave': 'wave 1.5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '1', boxShadow: '0 0 20px rgba(249, 115, 22, 0.3)' },
+                            '50%': { opacity: '.8', boxShadow: '0 0 40px rgba(249, 115, 22, 0.6)' },
+                        },
+                        'wave': {
+                            '0%, 100%': { height: '20%' },
+                            '50%': { height: '80%' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            overscroll-behavior-y: none;
+            min-height: max(884px, 100dvh);
+        }
+    </style>
 </head>
-<body>
-    <main class="app-shell">
-        <header class="app-header">
-            <div class="logo-row">
-                <svg class="logo-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M4 12h2l2-6 4 12 4-8 2 6h2" stroke-linecap="round" stroke-linejoin="round"/>
+
+<body
+    class="bg-background-light dark:bg-black min-h-screen flex flex-col items-center justify-center font-body antialiased selection:bg-primary selection:text-white transition-colors duration-300">
+    <!-- Use overflow-y-auto to allow scrolling for history and trend -->
+    <main
+        class="w-full max-w-md h-screen max-h-[900px] relative flex flex-col justify-between overflow-y-auto overflow-x-hidden bg-background-light dark:bg-black p-6 transition-colors duration-300 scrollbar-hide">
+
+        <button
+            class="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-200 dark:bg-neutral-900 text-gray-800 dark:text-gray-400 opacity-50 hover:opacity-100 transition-opacity"
+            onclick="document.documentElement.classList.toggle('dark')">
+            <span class="material-symbols-outlined text-sm">brightness_4</span>
+        </button>
+
+        <header class="mt-8 flex flex-col items-center justify-center z-10 shrink-0">
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-primary opacity-80" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path d="M4 12h2l2-6 4 12 4-8 2 6h2" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
-                <h1 class="app-title">PULSE</h1>
-                <svg class="logo-wave logo-wave-mirror" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M4 12h2l2-6 4 12 4-8 2 6h2" stroke-linecap="round" stroke-linejoin="round"/>
+                <h1 class="font-display text-4xl font-bold tracking-widest text-gray-900 dark:text-white">PULSE</h1>
+                <svg class="w-8 h-8 text-primary opacity-80 transform scale-x-[-1]" fill="none" stroke="currentColor"
+                    stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M4 12h2l2-6 4 12 4-8 2 6h2" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
             </div>
-            <p class="app-subtitle">Ambient BPM Detector</p>
+            <p class="text-xs tracking-[0.2em] font-medium text-gray-500 dark:text-neutral-500 mt-1 uppercase">Ambient
+                BPM Detector</p>
         </header>
 
-        <div class="content-area">
-            <div class="glow-blob" aria-hidden="true"></div>
-            <div class="bpm-circle-wrap">
-                <svg class="ring-svg ring-bg" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <svg class="ring-svg ring-confidence" viewBox="0 0 100 100" aria-hidden="true">
+        <div class="flex-1 flex flex-col items-center justify-center relative mt-6 mb-4 min-h-[320px] shrink-0">
+            <div
+                class="absolute w-64 h-64 bg-primary rounded-full blur-[120px] opacity-10 dark:opacity-20 animate-pulse">
+            </div>
+            <div class="relative w-72 h-72 flex items-center justify-center">
+                <svg class="absolute w-full h-full rotate-[-90deg] drop-shadow-[0_0_20px_rgba(249,115,22,0.6)]"
+                    viewBox="0 0 100 100">
+                    <circle class="text-gray-200 dark:text-neutral-800" cx="50" cy="50" fill="none" r="46"
+                        stroke="currentColor" stroke-width="2"></circle>
+                    <!-- Dynamic confidence ring -->
+                    <circle id="confidence-ring"
+                        class="drop-shadow-[0_0_10px_rgba(249,115,22,0.8)] transition-all duration-300" cx="50" cy="50"
+                        fill="none" r="46" stroke="url(#gradient)" stroke-dasharray="289" stroke-dashoffset="289"
+                        stroke-linecap="round" stroke-width="3"></circle>
                     <defs>
-                        <linearGradient id="ring-gradient" x1="0%" x2="100%" y1="0%" y2="0%">
-                            <stop offset="0%" stop-color="#F97316" stop-opacity="0"/>
-                            <stop offset="100%" stop-color="#F97316"/>
+                        <linearGradient id="gradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                            <stop offset="0%" stop-color="#F97316" stop-opacity="0"></stop>
+                            <stop offset="100%" stop-color="#F97316"></stop>
                         </linearGradient>
                     </defs>
-                    <circle id="confidence-ring" cx="50" cy="50" r="46" fill="none" stroke="url(#ring-gradient)" stroke-dasharray="289" stroke-dashoffset="289" stroke-linecap="round" stroke-width="3"/>
                 </svg>
-                <svg class="ring-svg ring-inner" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="50" r="46" fill="none" stroke="white" stroke-dasharray="289" stroke-dashoffset="260" stroke-linecap="round" stroke-width="4"/>
+                <div class="absolute inset-0 rounded-full border border-neutral-800/50"></div>
+                <svg class="absolute w-full h-full rotate-[-45deg]" viewBox="0 0 100 100">
+                    <circle class="opacity-80 dark:opacity-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" cx="50"
+                        cy="50" fill="none" r="46" stroke="white" stroke-dasharray="289" stroke-dashoffset="260"
+                        stroke-linecap="round" stroke-width="4"></circle>
                 </svg>
-                <div class="bpm-inner">
-                    <div id="genre-badge" class="genre-pill">—</div>
-                    <div id="bpm-display-container" class="bpm-digits">
-                        <div class="digit-column" id="digit-1">
-                            <div class="digit-strip" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>−</span></div>
-                        </div>
-                        <div class="digit-column" id="digit-2">
-                            <div class="digit-strip" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>−</span></div>
-                        </div>
-                        <div class="digit-column" id="digit-3">
-                            <div class="digit-strip" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>−</span></div>
+
+                <div class="flex flex-col items-center justify-center z-10 text-center">
+                    <div
+                        class="mb-4 px-4 py-1.5 rounded-full border border-gray-300 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/80 backdrop-blur-sm shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <span id="genre-badge"
+                            class="font-bold tracking-[0.2em] text-gray-600 dark:text-primary uppercase font-display"
+                            style="font-size: 10px;">READY</span>
+                    </div>
+
+                    <div class="relative mt-2 flex justify-center w-full">
+                        <!-- Rolling digits container -->
+                        <div id="bpm-display-container"
+                            class="bpm-digits font-digital text-7xl sm:text-8xl font-black tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                            <div class="digit-column" id="digit-1" style="opacity: 0.5;">
+                                <div
+                                    class="digit-strip text-transparent bg-clip-text bg-gradient-to-br from-gray-800 to-gray-500 dark:from-white dark:to-gray-200">
+                                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>−</span>
+                                </div>
+                            </div>
+                            <div class="digit-column" id="digit-2">
+                                <div
+                                    class="digit-strip text-transparent bg-clip-text bg-gradient-to-br from-gray-800 to-gray-500 dark:from-white dark:to-gray-200">
+                                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>−</span>
+                                </div>
+                            </div>
+                            <div class="digit-column" id="digit-3">
+                                <div
+                                    class="digit-strip text-transparent bg-clip-text bg-gradient-to-br from-gray-800 to-gray-500 dark:from-white dark:to-gray-200">
+                                    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>−</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="waveform-wrap" aria-label="Live input">
-                <canvas id="waveform-canvas" width="280" height="96" aria-label="Audio waveform"></canvas>
-            </div>
-
-            <div class="confidence-row">
-                <div class="confidence-track">
-                    <div id="confidence-fill" class="confidence-fill"></div>
-                </div>
-                <p id="status-text" class="status-text">Ready to listen</p>
-            </div>
         </div>
 
-        <div class="button-wrap">
-            <div class="button-glow" aria-hidden="true"></div>
-            <button id="listen-btn" type="button" class="listen-btn">
-                <span class="stop-icon" aria-hidden="true"></span>
-                <span id="btn-text">LISTEN</span>
+        <!-- Waveform container -->
+        <div class="w-full h-24 flex items-end justify-center mb-4 opacity-90 relative px-4 shrink-0">
+            <!-- Live Waveform replaces static CSS bars -->
+            <canvas id="waveform-canvas" class="w-full h-full"></canvas>
+        </div>
+
+        <!-- Progress bar & Status -->
+        <div class="w-full flex flex-col items-center mb-8 space-y-3 shrink-0">
+            <div class="w-32 h-1 bg-gray-300 dark:bg-neutral-800 rounded-full overflow-hidden">
+                <!-- Dynamic confidence fill -->
+                <div id="confidence-fill"
+                    class="h-full w-0 bg-primary rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)] relative overflow-hidden transition-all duration-300">
+                    <div class="absolute inset-0 bg-white/30 w-full h-full animate-pulse"></div>
+                </div>
+            </div>
+            <span id="status-text"
+                class="text-xs font-semibold tracking-widest text-gray-500 dark:text-neutral-500 uppercase text-center">Ready
+                to listen</span>
+        </div>
+
+        <!-- Listen Button -->
+        <div class="relative w-full flex justify-center pb-8 shrink-0">
+            <div
+                class="absolute bottom-4 w-40 h-40 bg-primary/20 dark:bg-primary/5 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <button id="listen-btn"
+                class="group relative w-24 h-24 rounded-full flex items-center justify-center transition-transform active:scale-95 focus:outline-none">
+                <div
+                    class="absolute inset-0 rounded-full bg-white shadow-[0_0_30px_rgba(255,255,255,0.4)] group-hover:shadow-[0_0_50px_rgba(255,255,255,0.6)] transition-all duration-300">
+                </div>
+                <div class="absolute inset-[2px] rounded-full bg-gradient-to-br from-white to-gray-200"></div>
+                <div class="relative flex items-center justify-center z-10 w-full h-full">
+                    <!-- Icon container toggled by main.js -->
+                    <div id="btn-icon"
+                        class="w-10 h-10 bg-black rounded-full shadow-sm transition-all duration-300 flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined text-4xl pr-1">play_arrow</span>
+                    </div>
+                </div>
             </button>
         </div>
+
+        <!-- Trend / Sparkline -->
+        <div class="w-full shrink-0 px-2 mt-4 pb-4 border-t border-neutral-800/50 pt-6">
+            <div class="flex justify-between items-center mb-2 px-2">
+                <span class="font-bold tracking-widest text-gray-500 uppercase" style="font-size: 10px;">Trend</span>
+                <span class="text-gray-600" style="font-size: 10px;">40–200 BPM</span>
+            </div>
+            <canvas id="sparkline-canvas"
+                class="w-full h-12 bg-neutral-900/50 rounded-lg border border-neutral-800/50"></canvas>
+        </div>
+
+        <!-- History -->
+        <section class="w-full shrink-0 px-2 pb-12">
+            <div class="flex justify-between items-center mb-4 px-2">
+                <h2 class="font-bold tracking-widest text-gray-500 uppercase" style="font-size: 10px;">History</h2>
+                <button id="clear-history" class="font-bold text-primary tracking-wider uppercase hover:text-orange-400"
+                    style="font-size: 10px;">Clear</button>
+            </div>
+            <div id="history-list" class="flex flex-col gap-2">
+                <p class="text-center text-xs text-gray-600 py-4">No sessions recorded yet</p>
+            </div>
+        </section>
+
     </main>
+
     <script type="module" src="./main.js"></script>
 </body>
+
 </html>
