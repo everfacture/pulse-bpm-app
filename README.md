@@ -1,21 +1,17 @@
-# <div align="center"><a href="banner.html">Pulse</a></div>
+# Pulse 🎶
 
-**Instant, lightweight, one-button ambient BPM detection.**
+**Real-time Ambient Rhythm, Tracked.**
 
-<p align="center">
-  <img src="banner.png" alt="Pulse Banner" onerror="this.style.display='none'">
-  <br>
-  <em><a href="banner.html">View interactive banner here</a></em>
-</p>
+Tiny web app that keeps your ambient BPM detection visible. One-button flow, dynamic digital display, hardware-style locks. Point your phone at a speaker, press LISTEN, get BPM quickly. 
 
-[Live Demo](https://everfacture.github.io/pulse-bpm-app/) | [MIT License](./LICENSE)
+<img src="banner.png" alt="Pulse banner" width="100%" />
 
-Pulse is built for one job: point your phone at a speaker, press **LISTEN**, get BPM quickly.
+## Install
 
-Built to ship fast, then improve continuously.
+### Requirements
+- Modern browser with AudioContext support
 
-## Quick Start
-
+### Local Development
 ```bash
 git clone https://github.com/everfacture/pulse-bpm-app.git
 cd pulse-bpm-app
@@ -23,48 +19,19 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:5173`, allow microphone access, then press **LISTEN**.
+## Features
+- Hardware CDJ-style BPM Engine: Strict tempo locking for techno/house DJ sets.
+- One-touch capture: Tap LISTEN to instantly hook into the microphone.
+- Persistent Rhythm History: Session usage tracking of tempos across genres via IndexedDB.
+- Trend Sparkline: Visual history of the last 50 stable readings.
+- Harmonic Rejection: Intelligent tempo math prevents rapid double/half-time flickering.
+- Privacy-first: On-device audio processing; nothing ever leaves your browser.
+- PWA-ready deployment.
 
-## How It Works
-
-```text
-Mic -> AudioContext -> realtime-bpm-analyzer -> Live BPM display
-```
-
-- One-button flow: start/stop listening from a single control
-- Real-time BPM + confidence feedback
-- Privacy-first: no audio leaves your device
-- PWA-ready deployment via Vite + vite-plugin-pwa
-
-## Tech Stack
-
-| Layer | Choice | Notes |
-|-------|--------|-------|
-| Core detection | `realtime-bpm-analyzer` | Pinned to `5.0.0` for stable package entry resolution |
-| Build tooling | Vite 7 + vite-plugin-pwa | Fast dev/build and static deploy support |
-| UI | Vanilla JS + CSS | Minimal runtime overhead |
-| Local data | IndexedDB module | Foundation for future session history UX |
-
-## Current Limits
-
-- Works best with clear rhythmic material (EDM, hip-hop, pop)
-- Less reliable with low-percussion or highly ambient audio
-- Practical detection window in this app is tuned to roughly `40-200 BPM`
-
-## What's Next (Always Improving)
-
-No hard promises or fixed release dates. Near-term improvement areas:
-
-- Lightweight history surface and export flow
-- Better stability in noisy or inconsistent environments
-- Additional UX polish for confidence and tempo transitions
-
-## Troubleshooting
-
-- If Vite reports `Failed to resolve entry for package "realtime-bpm-analyzer"`:
-  - run `npm ci`
-  - ensure `realtime-bpm-analyzer` is pinned to `5.0.0` in `package.json` and lockfile
+## What's Next
+Built to ship fast. We work on this from time to time to mess with browser audio APIs. No hard promises or fixed release timelines.
+- Better stability in highly ambient environments.
+- History export flows.
 
 ## License
-
 MIT.
