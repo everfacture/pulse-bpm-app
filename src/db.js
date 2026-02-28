@@ -47,3 +47,15 @@ export async function saveHistory(entry) {
         transaction.onerror = () => reject(transaction.error);
     });
 }
+
+export async function clearHistory() {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.clear();
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
