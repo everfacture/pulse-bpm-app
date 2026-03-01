@@ -28,8 +28,11 @@ npm run dev
 - Privacy-first: On-device audio processing; nothing ever leaves your browser.
 - PWA-ready deployment.
 
+## Try it out
+[Launch Pulse BPM App](https://everfacture.github.io/pulse-bpm-app/)
+
 ## What's Next
-Built to ship fast. We work on this from time to time to mess with browser audio APIs. No hard promises or fixed release timelines.
+Built to ship fast. I work on this from time to time to mess with browser audio APIs. No hard promises or fixed release timelines.
 - Better stability in highly ambient environments.
 - History export flows.
 
